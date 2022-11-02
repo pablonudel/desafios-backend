@@ -1,0 +1,2 @@
+{"level":"error","message":"PATH:/api/products - METHOD:POST - ERROR:TypeError: Cannot read properties of undefined (reading 'id')"}
+{"level":"error","message":"PATH:/api/products/2 - METHOD:PUT - ERROR:Error: No se puede escribir el archivo"}
