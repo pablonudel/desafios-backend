@@ -12,7 +12,6 @@ export default class PersistenceFactory{
                 let {default:MongoDao} = await import('./mongo.dao.js')
                 return new MongoDao()
             case "filesystem":
-                MongoDBService.getInstance()
                 let {default:FileDao} = await import('./file.dao.js')
                 return new FileDao()
         }
