@@ -10,7 +10,7 @@ const UserSchema = new Schema({
     avatar:{type:String, required:true},
     password:{type:String, required:true},
     role:{type:String, required:true},
-    cartID:{type:String, required:true, unique: true}
+    cart:{type:String, required:true, unique: true}
 },{timestamps:true})
 
 const UserModel = model(collection, UserSchema)

@@ -1,3 +1,4 @@
 {"level":"error","message":"PATH:/api/products - METHOD:POST - ERROR:TypeError: Cannot read properties of undefined (reading 'id')"}
 {"level":"warn","message":"PATH:/api/products/2 - METHOD:GET - ERROR:Producto no encontrado"}
 {"level":"error","message":"PATH:/api/products/2 - METHOD:PUT - ERROR:Error: No se puede escribir el archivo"}
+{"level":"error","message":"PATH:/api/users - METHOD:POST - ERROR:ValidationError: cart: Path `cart` is required., role: Path `role` is required., avatar: Path `avatar` is required."}
