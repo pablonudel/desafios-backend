@@ -1,10 +1,12 @@
 import { userService, cartService } from "../services/index.js";
+import {UserDto} from "../dtos/index.js"
 import { ServerResponse } from '../utils/serverResponse.js'
  
 const getUsers = async(req,res)=>{
     try {
         const result = await userService.getAll()
-        ServerResponse.success({req:req, res, data:result})
+        const parsedUsers = result.map(user => new UserDto(user))
+        ServerResponse.success({req:req, res, data:parsedUsers})
     } catch (error) {
         ServerResponse.internalError({req:req, res, error:error})
     }
@@ -14,23 +16,26 @@ const getUserById = async(req,res)=>{
     try {
         const {id} = req.params
         const result = await userService.getBy({'_id':id})
-        if(!result) throw `Usuario con ID:${id} no encontrado`
-        ServerResponse.success({req:req, res, data:result}) 
+        if(!result) return ServerResponse.notFound({req:req, res, error:`Usuario con ID:${id} no encontrado`})
+        const parsedUser = new UserDto(result)
+        ServerResponse.success({req:req, res, data:parsedUser}) 
     } catch (error) {
         ServerResponse.internalError({req:req, res, error:error})
     }
 }
 
+/*
 const saveUser = async(req,res)=>{
     try {
         const data = req.body
         const result = await userService.save(data)
-        ServerResponse.success({req:req, res, data:result}) 
+        const parsedUser = new UserDto(result)
+        ServerResponse.success({req:req, res, data:parsedUser}) 
     } catch (error) {
         ServerResponse.internalError({req:req, res, error:error})
     }
 }
-
+*/
 
 const updateUserById = async(req,res)=>{
     try {
@@ -38,7 +43,8 @@ const updateUserById = async(req,res)=>{
         const data = req.body
         await userService.update(id, data)
         const result = await userService.getBy({'_id':id})
-        ServerResponse.success({req:req, res, data:result})
+        const parsedUser = new UserDto(result)
+        ServerResponse.success({req:req, res, data:parsedUser})
     } catch (error) {
         ServerResponse.internalError({req:req, res, error:error})
     }
@@ -61,7 +67,7 @@ const deleteUserById = async(req,res)=>{
 export default {
     getUsers,
     getUserById,
-    saveUser,
+    //saveUser,
     updateUserById,
     deleteUserById
 }

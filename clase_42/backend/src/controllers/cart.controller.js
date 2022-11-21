@@ -1,4 +1,5 @@
-import { cartService, productService } from "../services/index.js";
+import { cartService, productService } from "../services/index.js"
+import { CartProductDto } from "../dtos/index.js"
 import { ServerResponse } from '../utils/serverResponse.js'
  
 
@@ -6,7 +7,7 @@ const getCartById = async(req,res)=>{
     try {
         const {id_cart} = req.params
         const result = await cartService.getBy({'_id':id_cart})
-        if(!result) throw `Carrito con ID:${id} no encontrado`
+        if(!result) return ServerResponse.notFound({req:req, res, error:`Carrito con ID:${id_cart} no encontrado`})
         ServerResponse.success({req:req, res, data:result.products}) 
     } catch (error) {
         ServerResponse.internalError({req:req, res, error:error})
@@ -19,24 +20,18 @@ const updateCartProducts = async(req,res)=>{
         const data = req.body
         const cart = await cartService.getBy({'_id':id_cart})
         const products = await productService.getAll()
+       
         const product = products.find(p => JSON.stringify(p._id) === JSON.stringify(data._id))
-
-        if(!product) return ServerResponse.notFound({req:req, res, error:'El producto no existe'})
+        if(!product) return ServerResponse.notFound({req:req, res, error:'Producto no encontrado'})
+        
         const productInCart = cart.products.find(p => JSON.stringify(p._id) === JSON.stringify(data._id))
         const indexOfProduct = cart.products.indexOf(productInCart)
         
-        const addProduct = {
-            _id: product._id,
-            name: product.name,
-            code: product.code,
-            image: product.image,
-            price: product.price,
-            qty: req.body.qty,
-            subTotal: product.price * req.body.qty
-        }
+        const addProduct = new CartProductDto(product, req.body.qty)
 
         if(productInCart && cart.products[indexOfProduct].qty + data.qty > product.stock) return ServerResponse.badRequest({req:req, res, error:'Stock no disponible'})
         if(addProduct.qty > product.stock) return ServerResponse.badRequest({req:req, res, error:'Stock no disponible'})
+        if(addProduct.qty < 1) return ServerResponse.badRequest({req:req, res, error:'La cantidad no puede ser menor a 1'})
 
         productInCart ? (
             cart.products[indexOfProduct].qty += data.qty,
@@ -47,8 +42,7 @@ const updateCartProducts = async(req,res)=>{
 
         await cartService.update(id_cart, {products:cart.products})
         const result = await cartService.getBy({'_id':id_cart})
-        ServerResponse.success({req:req, res, data:result})
-        
+        ServerResponse.success({req:req, res, data:result.products})
     } catch (error) {
         ServerResponse.internalError({req:req, res, error:error})
     }
@@ -58,9 +52,6 @@ const deleteCartProductById = async(req,res)=>{
     try {
         const {id_cart, id_prod} = req.params
 
-        console.log(id_cart);
-        console.log(id_prod);
-
         const cart = await cartService.getBy({'_id':id_cart})
         const product = cart.products.find(p => JSON.stringify(p._id) === JSON.stringify(id_prod))
 
@@ -69,7 +60,7 @@ const deleteCartProductById = async(req,res)=>{
         cart.products = cart.products.filter(p => JSON.stringify(p._id) !== JSON.stringify(id_prod))
         await cartService.update(id_cart, {products:cart.products})
         const result = await cartService.getBy({'_id':id_cart})
-        ServerResponse.success({req:req, res, data:result})
+        ServerResponse.success({req:req, res, data:result.products})
     } catch (error) {
         ServerResponse.internalError({req:req, res, error:error})
     }
@@ -78,11 +69,10 @@ const deleteCartProductById = async(req,res)=>{
 const emptyCart = async(req,res)=>{
     try {
         const {id_cart} = req.params
-        const products = []
         await cartService.getBy({'_id':id_cart})
-        await cartService.update(id_cart, {products:products})
+        await cartService.update(id_cart, {products:[]})
         const result = await cartService.getBy({'_id':id_cart})
-        ServerResponse.success({req:req, res, data:result})
+        ServerResponse.success({req:req, res, data:result.products})
     } catch (error) {
         ServerResponse.internalError({req:req, res, error})
     }

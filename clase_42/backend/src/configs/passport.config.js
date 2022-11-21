@@ -1,19 +1,14 @@
-import mongoose from 'mongoose'
 import passport from 'passport'
 import local from 'passport-local'
 import {userService, cartService} from '../services/index.js'
 import {hashPass, unhashPass} from '../utils/index.js'
 import {config} from './config.js'
-import MongoDBService from './mongoDB.config.js' 
 
 const LocalStrategy = local.Strategy
 const userAdmin = {_id:'admin', name:'Admin',lastname:'User', role:'SuperAdmin'} // cargar en variables de entorno
 
 
 export const initPassport = () => {
-    const mongoConnection = new MongoDBService(mongoose, config)
-    mongoConnection.getInstance
-
     passport.use('register', new LocalStrategy({passReqToCallback:true, usernameField:'email'}, async(req, email, password, done)=>{
         try {
             const {name,lastname} = req.body

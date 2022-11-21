@@ -1,5 +1,5 @@
-import {initPassport} from './passport.config.js'
-import MongoDBService from './mongoDB.config.js'
 import { config } from "./config.js";
+import MongoDBService from './mongoDB.config.js'
+import {initPassport} from './passport.config.js'
 
-export {initPassport, MongoDBService, config}
+export {config, MongoDBService, initPassport}

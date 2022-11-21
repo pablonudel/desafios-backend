@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-//import {MongoDBService, config} from '../configs/index.js'
+import {MongoDBService, config} from '../configs/index.js'
 import User from './User.js'
 import Cart from './Cart.js'
 import Product from './Product.js'
@@ -7,6 +7,7 @@ import Product from './Product.js'
 
 export default class Dao {
     constructor(){
+        this.mongoose = new MongoDBService(mongoose, config)
         const timestamps = {timestamps:{createdAt:'createdAt', updatedAt:'updatedAt'}}
         const userSchema = mongoose.Schema(User.schema, timestamps)
         const cartSchema = mongoose.Schema(Cart.schema, timestamps)

@@ -5,14 +5,17 @@ export default class Product{
 
     static get schema(){
         return{
-            name:String,
+            name:{type:String, required:true},
             description:String,
-            code:String,
-            image:String,
-            price:Number,
-            category:String,
-            stock:Number,
-            active:{type:Number, default:true}
+            code:{type:String, required:true, unique:true},
+            image:{type:String, required:true},
+            price:{type:Number, required:true},
+            category:{
+                type:String,
+                default:'Sin Categoria'
+            },
+            stock:{type:Number, default:1},
+            active:{type:Boolean, default:true}
         }
     }
 }

@@ -1,7 +1,8 @@
+import { ServerResponse } from '../utils/serverResponse.js'
 export function checkAuth(req,res,next){
     if(req.isAuthenticated()){
         next();
     } else{
-        res.redirect("/login");
+        ServerResponse.unauthorized({req:req, res, error:'No autorizado'})
     }
 }

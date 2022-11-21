@@ -14,8 +14,7 @@ router.post('/register', passport.authenticate('register',{failureRedirect:'/api
     ServerResponse.success({req:req, res, data:req.user})
 })
 
-router.get('/registerfail', (req, res)=>{
-    console.log('Register fail');
+router.get('/registerfail', async (req, res)=>{
     ServerResponse.notFound({req:req, res, error:'Register fail'})
 })
 
@@ -25,7 +24,6 @@ router.post('/login', passport.authenticate('login',{failureRedirect:'/api/sessi
 })
 
 router.get('/loginfail', (req, res)=>{
-    console.log('Login fail');
     ServerResponse.notFound({req:req, res, error:'Login fail'})
 })
 

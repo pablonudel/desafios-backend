@@ -6,6 +6,9 @@ import MongoStore from 'connect-mongo'
 import { config, initPassport } from './configs/index.js'
 import { middleware } from './middlewares/index.js'
 import {sessionsRouter, usersRouter, cartRouter, productsRouter} from './routes/index.js'
+import { ApolloServer } from 'apollo-server-express'
+import typeDefs from './graphQL/typeDefs.js'
+import resolvers from './graphQL/resolvers.js'
 
 const app = express()
 
@@ -29,17 +32,14 @@ initPassport()
 app.use(passport.initialize())
 app.use(passport.session())
 
-
-
-
-// app.use('/', (rer,res)=>{
-//     res.send('Ok')
-// })
-
 app.use(config.SERVER.ROUTES.SESSIONS, sessionsRouter)
 app.use(config.SERVER.ROUTES.USERS, usersRouter)
 app.use(config.SERVER.ROUTES.CARTS, cartRouter)
 app.use(config.SERVER.ROUTES.PRODUCTS, productsRouter)
+
+const apolloServer = new ApolloServer({typeDefs,resolvers})
+await apolloServer.start()
+apolloServer.applyMiddleware({app})
 
 /** Server Init */
 const server = app.listen(config.SERVER.PORT, ()=>{
